@@ -96,11 +96,10 @@ private:
 
         //Chassis
         {
-            jop::RigidBody2D::ConstructInfo2D chassisInfo(jop::ResourceManager::getNamed<jop::RectangleShape2D>("carchassis", 8.f, 2.f), jop::RigidBody2D::Type::Dynamic, 2.6f);
+            jop::RigidBody2D::ConstructInfo2D chassisInfo(jop::ResourceManager::getNamed<jop::RectangleShape2D>("carchassis", 8.f, 2.f), jop::RigidBody2D::Type::Dynamic, 2.4f);
             m_car->setPosition(startPos.x, startPos.y, startPos.z);
             m_car->createComponent<jop::RigidBody2D>(getWorld<2>(), chassisInfo);
         }
-
         //Wheels
         {
             jop::Model wheelModel = jop::Model(

@@ -108,7 +108,7 @@ class CONVEYORSCENE : public jop::Scene
             jop::ResourceManager::getNamed<jop::RectangleMesh>("plankMesh", glm::vec2(pl, ph)),
             jop::ResourceManager::getEmpty<jop::Material>("plankMat", true).setMap(jop::Material::Map::Diffuse, jop::ResourceManager::get<jop::Texture2D>("plank.png")));
 
-        static const jop::RigidBody2D::ConstructInfo2D pieceInfo(jop::ResourceManager::getNamed<jop::RectangleShape2D>("beltPiece", pl, ph), jop::RigidBody2D::Type::Dynamic, 1.f);
+        static const jop::RigidBody2D::ConstructInfo2D pieceInfo(jop::ResourceManager::getNamed<jop::RectangleShape2D>("beltPiece", pl, ph), jop::RigidBody2D::Type::Dynamic, 0.005f);
 
         auto belt = m_system->createChild("belt");
 
