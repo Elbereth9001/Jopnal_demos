@@ -33,6 +33,80 @@ private:
 
             jop::RigidBody2D::ConstructInfo2D groundInfo(jop::ResourceManager::getNamed<jop::TerrainShape2D>("ground2D", ground_vec));
             m_ground->createComponent<jop::RigidBody2D>(getWorld<2>(), groundInfo);
+#if 1
+            {
+                std::vector<std::pair< glm::vec3, glm::vec4>> meshPoints;
+                std::vector<unsigned int> meshIndices;
+                jop::uint32 base(0u);
+                const glm::vec4 colorBottom(0.1f, 0.5f, 0.f, 1.f);  //RGBA
+
+                meshPoints.reserve(ground_vec.size() * 4u);
+                meshIndices.reserve(ground_vec.size() * 6u);
+
+                for (unsigned int i = 0u; i < ground_vec.size() - 1u; ++i)
+                {
+                    base = i * 4u;
+
+                    meshIndices.push_back(base + 3u);
+                    meshIndices.push_back(base + 0u);
+                    meshIndices.push_back(base + 1u);
+                    meshIndices.push_back(base + 1u);
+                    meshIndices.push_back(base + 2u);
+                    meshIndices.push_back(base + 3u);
+
+                    //Both = 0.f - +1.f
+             
+                 meshPoints.emplace_back(glm::vec3(ground_vec[i].x, ground_vec[i].y, 0.1f), colorBottom);
+                 meshPoints.emplace_back(glm::vec3(ground_vec[i].x, -50.f, 0.1f), colorBottom);
+                 meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, -50.f, 0.1f), colorBottom);
+                 meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, ground_vec[i + 1u].y, 0.1f), colorBottom);
+              
+
+
+                }
+                auto& mesh = jop::ResourceManager::getEmpty<jop::Mesh>("groundMesh1");
+                mesh.load(meshPoints.data(), meshPoints.size()*sizeof(std::pair< glm::vec3, glm::vec4 >), jop::Mesh::Position | jop::Mesh::Color, meshIndices.data(), sizeof(unsigned int), meshIndices.size());
+                auto& mat = jop::ResourceManager::getEmpty<jop::Material>("groundmat1", false);
+
+                m_ground->createComponent<jop::Drawable>(getRenderer()).setModel(jop::Model(mesh, mat));
+            }
+
+            {
+                std::vector<std::pair< glm::vec3, glm::vec4>> meshPoints;
+                std::vector<unsigned int> meshIndices;
+                jop::uint32 base(0u);
+                const glm::vec4 colorTop(0.2f, 0.2f, 1.f, 1.f);
+
+                meshPoints.reserve(ground_vec.size() * 4u);
+                meshIndices.reserve(ground_vec.size() * 6u);
+
+                for (unsigned int i = 0u; i < ground_vec.size() - 1u; ++i)
+                {
+                    base = i * 4u;
+
+                    meshIndices.push_back(base + 3u);
+                    meshIndices.push_back(base + 0u);
+                    meshIndices.push_back(base + 1u);
+                    meshIndices.push_back(base + 1u);
+                    meshIndices.push_back(base + 2u);
+                    meshIndices.push_back(base + 3u);
+
+                    //Both = 0.f - +1.f
+
+
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i].x, ground_vec[i].y + 150.f, -0.1f), colorTop);
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i].x, ground_vec[i].y, -0.1f), colorTop);
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, ground_vec[i].y, -0.1f), colorTop);
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, ground_vec[i + 1u].y + 150.f, -0.1f), colorTop);
+
+                }
+                auto& mesh = jop::ResourceManager::getEmpty<jop::Mesh>("groundMesh2");
+                mesh.load(meshPoints.data(), meshPoints.size()*sizeof(std::pair< glm::vec3, glm::vec4 >), jop::Mesh::Position | jop::Mesh::Color, meshIndices.data(), sizeof(unsigned int), meshIndices.size());
+                auto& mat = jop::ResourceManager::getEmpty<jop::Material>("groundmat2", false);
+
+                m_ground->createComponent<jop::Drawable>(getRenderer()).setModel(jop::Model(mesh, mat));
+            }
+#endif
         }
 
         //Create two pieces to hold the bridge in place
@@ -97,8 +171,15 @@ private:
         //Chassis
         {
             jop::RigidBody2D::ConstructInfo2D chassisInfo(jop::ResourceManager::getNamed<jop::RectangleShape2D>("carchassis", 8.f, 2.f), jop::RigidBody2D::Type::Dynamic, 2.4f);
+
+            jop::Model chassisModel = jop::Model(
+                jop::ResourceManager::getNamed<jop::RectangleMesh>("chassisMesh", glm::vec2(8.f, 2.f)),
+                jop::ResourceManager::getEmpty<jop::Material>("chassisMat", true).setMap(jop::Material::Map::Diffuse, jop::ResourceManager::get<jop::Texture2D>("chassis.png")));
+
             m_car->setPosition(startPos.x, startPos.y, startPos.z);
             m_car->createComponent<jop::RigidBody2D>(getWorld<2>(), chassisInfo);
+            m_car->createComponent<jop::Drawable>(getRenderer()).setModel(chassisModel);
+
         }
         //Wheels
         {

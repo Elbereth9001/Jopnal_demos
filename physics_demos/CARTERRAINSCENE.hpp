@@ -14,7 +14,6 @@ class CARTERRAINSCENE : public jop::Scene
 
     void createGround(const unsigned int length, const unsigned int width, const unsigned int entropy)
     {
-
         auto r = [&entropy]()
         {
             static jop::Randomizer r;
@@ -106,27 +105,29 @@ class CARTERRAINSCENE : public jop::Scene
         jop::uint32 base(0u);
         float colorHere(0.f);
         float colorNext(0.f);
-        const glm::vec4 colorBottom(0.f, 1.f, 0.f, 1.f);
-        const glm::vec4 colorTop(1.f, 0.f, 0.f, 1.f);
+        const glm::vec4 color1(1.f, 0.2f, 0.f, 1.f);
+        const glm::vec4 color2(0.f, 0.5f, 0.f, 1.f);
+        const glm::vec4 color3(1.2f, 0.5f, 0.2f, 1.f);
 
         meshPoints.reserve(ground.size() * 4u);
         meshPoints.reserve(ground.size() * 6u);
 
-        for (unsigned int i = 0u; i < ground.size() - 1u; ++i)
+        for (unsigned int i = 0u; i < ground.size() - 3u;)
         {
             base = i * 4u;
 
-            meshIndices.push_back(base + 3u);
-            meshIndices.push_back(base + 0u);
-            meshIndices.push_back(base + 1u);
-            meshIndices.push_back(base + 1u);
-            meshIndices.push_back(base + 2u);
-            meshIndices.push_back(base + 3u);
+            for (unsigned int j = 0u; j < 4u; ++j)
+            {
+                meshIndices.push_back(base + 2u);
+                meshIndices.push_back(base + 1u);
+                meshIndices.push_back(base + 0u);
 
-            meshPoints.emplace_back(ground[i], colorTop);
-            meshPoints.emplace_back(ground[i], colorBottom);
-            meshPoints.emplace_back(ground[i + 1u], colorBottom);
-            meshPoints.emplace_back(ground[i + 1u], colorTop);
+                meshPoints.emplace_back(ground[i], color1);
+                meshPoints.emplace_back(ground[i + 1u], color2);
+                meshPoints.emplace_back(ground[i + 2u], color3);
+            }
+
+            i += 3u;
         }
 
         auto& mesh = jop::ResourceManager::getEmpty<jop::Mesh>("groundmesh");
@@ -142,11 +143,20 @@ class CARTERRAINSCENE : public jop::Scene
     {
 
         jop::RigidBody::ConstructInfo chassisInfo(jop::ResourceManager::getNamed<jop::BoxShape>("chassis", glm::vec3(4.f, 1.f, 6.f)), jop::RigidBody::Type::Dynamic, 3.7f);
+
+        jop::Model chassisModel(jop::ResourceManager::getNamed<jop::BoxMesh>("chassismesh", glm::vec3(4.f, 1.f, 6.f)),
+            jop::ResourceManager::getEmpty<jop::Material>("chassismat", true).setMap(jop::Material::Map::Diffuse, jop::ResourceManager::get<jop::Texture2D>("chassis.png")));
+
         jop::RigidBody::ConstructInfo wheelInfo(jop::ResourceManager::getNamed<jop::SphereShape>("wheels", 0.5f), jop::RigidBody::Type::Dynamic, 0.5f);
+
+        jop::Model wheelModel(jop::ResourceManager::getNamed<jop::SphereMesh>("wheelmesh", 0.5f, 15),
+            jop::ResourceManager::getEmpty<jop::Material>("wheelmat", true).setMap(jop::Material::Map::Diffuse, jop::ResourceManager::get<jop::Texture2D>("wheel.png")));
+
         wheelInfo.friction *= 8.f;
 
         m_car->setPosition(5.f, 10.f, 5.f);
         m_car->createComponent<jop::RigidBody>(getWorld<3>(), chassisInfo);
+        m_car->createComponent<jop::Drawable>(getRenderer()).setModel(chassisModel);
 
 
         for (int i = 0; i < 4; ++i)
@@ -173,6 +183,7 @@ class CARTERRAINSCENE : public jop::Scene
             auto wheel = m_car->createChild("");
             wheel->setPosition(newPos);
             wheel->createComponent<jop::RigidBody>(getWorld<3>(), wheelInfo);
+            wheel->createComponent<jop::Drawable>(getRenderer()).setModel(wheelModel);
 
             m_car->getComponent<jop::RigidBody>()->link<jop::WheelJoint>(*wheel->getComponent<jop::RigidBody>(), true);
         }
@@ -192,7 +203,7 @@ public:
 
         unsigned int groundLength(160u);
         unsigned int groundWidth(32u);
-        unsigned int entropy(8u);
+        unsigned int entropy(4u);
 
         unsigned int carLength(6u);
         unsigned int wheels(4u);
@@ -200,33 +211,35 @@ public:
         createGround(groundLength, groundWidth, entropy);
         createCar(carLength, wheels);
 
-        glm::quat q(0.006f, 0.020f, 0.963f, -0.267f);
-
-        auto a = std::atan2(2 * (q.w*q.x + q.y*q.z), 1 - 2 * (sqrt(q.x) + sqrt(q.y)));
-        auto b = asin(2 * (q.w*q.y - q.z*q.x));
-        auto c = std::atan2(2 * (q.w*q.z + q.x*q.y), 1 - 2 * (sqrt(q.y) + sqrt(q.z)));
-
-
+        //   glm::quat q(0.006f, 0.020f, 0.963f, -0.267f);
+        //   auto a = std::atan2(2 * (q.w*q.x + q.y*q.z), 1 - 2 * (sqrt(q.x) + sqrt(q.y)));
+        //   auto b = asin(2 * (q.w*q.y - q.z*q.x));
+        //   auto c = std::atan2(2 * (q.w*q.z + q.x*q.y), 1 - 2 * (sqrt(q.y) + sqrt(q.z)));
+        //   m_cam->rotate(a, b, c);
 
 
-        //m_cam->rotate(2.6f, 0.f, -3.1f);
-        m_cam->rotate(glm::quat(0.006f, 0.020f, 0.963f, -0.267f));
-        
+        m_cam->rotate(2.6f, 0.f, -3.1f);
+        //m_cam->rotate(glm::quat(0.006f, 0.020f, 0.963f, -0.267f));
+
         m_cam->setPosition(10.f, 10.f, -10.f);
 
         m_cam->createComponent<jop::Camera>(getRenderer(), jop::Camera::Projection::Perspective);
-        
-        
-        getWorld<3>().setDebugMode(true);
+
+
+        //        getWorld<3>().setDebugMode(true);
 
     }
 
     void preUpdate(const float deltaTime) override
     {
-        glm::vec3 p = m_car->getGlobalPosition();
-        glm::quat r = m_car->getGlobalRotation();
-        //m_cam->setRotation(r);
-        //m_cam->setPosition(p.x, p.y + 4.f, p.z - 9.f);
+        glm::vec3 pg = m_car->getGlobalPosition();
+        glm::vec3 pl = m_car->getLocalPosition();
+        glm::quat rg = m_car->getGlobalRotation();
+        glm::quat rl = m_car->getLocalRotation();
+
+        m_cam->setPosition(pl.x, pl.y + 4.f, pl.z - 9.f);
+        m_cam->lookAt(pg);
+
 
         using k = jop::Keyboard;
         if (k::isKeyDown(k::Up))
