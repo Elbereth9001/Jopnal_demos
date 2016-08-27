@@ -4,8 +4,6 @@
 
 static const glm::vec3 startPos(-90.f, 60.f, 0.f);
 
-
-
 class BRIDGESCENE : public jop::Scene
 {
 private:
@@ -34,6 +32,7 @@ private:
             jop::RigidBody2D::ConstructInfo2D groundInfo(jop::ResourceManager::getNamed<jop::TerrainShape2D>("ground2D", ground_vec));
             m_ground->createComponent<jop::RigidBody2D>(getWorld<2>(), groundInfo);
 #if 1
+            //Ground colors
             {
                 std::vector<std::pair< glm::vec3, glm::vec4>> meshPoints;
                 std::vector<unsigned int> meshIndices;
@@ -55,14 +54,11 @@ private:
                     meshIndices.push_back(base + 3u);
 
                     //Both = 0.f - +1.f
-             
-                 meshPoints.emplace_back(glm::vec3(ground_vec[i].x, ground_vec[i].y, 0.1f), colorBottom);
-                 meshPoints.emplace_back(glm::vec3(ground_vec[i].x, -50.f, 0.1f), colorBottom);
-                 meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, -50.f, 0.1f), colorBottom);
-                 meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, ground_vec[i + 1u].y, 0.1f), colorBottom);
-              
 
-
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i].x, ground_vec[i].y, 0.1f), colorBottom);
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i].x, -50.f, 0.1f), colorBottom);
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, -50.f, 0.1f), colorBottom);
+                    meshPoints.emplace_back(glm::vec3(ground_vec[i + 1u].x, ground_vec[i + 1u].y, 0.1f), colorBottom);
                 }
                 auto& mesh = jop::ResourceManager::getEmpty<jop::Mesh>("groundMesh1");
                 mesh.load(meshPoints.data(), meshPoints.size()*sizeof(std::pair< glm::vec3, glm::vec4 >), jop::Mesh::Position | jop::Mesh::Color, meshIndices.data(), sizeof(unsigned int), meshIndices.size());
@@ -71,6 +67,7 @@ private:
                 m_ground->createComponent<jop::Drawable>(getRenderer()).setModel(jop::Model(mesh, mat));
             }
 
+            //Sky colors
             {
                 std::vector<std::pair< glm::vec3, glm::vec4>> meshPoints;
                 std::vector<unsigned int> meshIndices;
@@ -111,15 +108,15 @@ private:
 
         //Create two pieces to hold the bridge in place
         {
-            //Static Sensor = unaffected by gravity and we can drive through it
-            jop::RigidBody2D::ConstructInfo2D holdInfo(jop::ResourceManager::getNamed<jop::RectangleShape2D>("holders", 1.f, 1.f), jop::RigidBody2D::Type::StaticSensor);
-            auto h1 = m_ground->createChild("holder1");
-            h1->setPosition(-52.f, 51.f, 0.f);
-            h1->createComponent<jop::RigidBody2D>(getWorld<2>(), holdInfo);
-            auto h2 = m_ground->createChild("holder2");
-            h2->setPosition(52.f, 51.f, 0.f);
-            h2->createComponent<jop::RigidBody2D>(getWorld<2>(), holdInfo);
-        }
+        //Static Sensor = unaffected by gravity and we can drive through it
+        jop::RigidBody2D::ConstructInfo2D holdInfo(jop::ResourceManager::getNamed<jop::RectangleShape2D>("holders", 1.f, 1.f), jop::RigidBody2D::Type::StaticSensor);
+        auto h1 = m_ground->createChild("holder1");
+        h1->setPosition(-52.f, 51.f, 0.f);
+        h1->createComponent<jop::RigidBody2D>(getWorld<2>(), holdInfo);
+        auto h2 = m_ground->createChild("holder2");
+        h2->setPosition(52.f, 51.f, 0.f);
+        h2->createComponent<jop::RigidBody2D>(getWorld<2>(), holdInfo);
+    }
 
         //Creating the actual bridge
         {
@@ -183,36 +180,36 @@ private:
         }
         //Wheels
         {
-            jop::Model wheelModel = jop::Model(
-                jop::ResourceManager::getNamed<jop::CircleMesh>("wheelMesh", 1.2f, 30u),
-                jop::ResourceManager::getEmpty<jop::Material>("wheelMat", true).setMap(jop::Material::Map::Diffuse, jop::ResourceManager::get<jop::Texture2D>("wheel.png")));
+        jop::Model wheelModel = jop::Model(
+            jop::ResourceManager::getNamed<jop::CircleMesh>("wheelMesh", 1.2f, 30u),
+            jop::ResourceManager::getEmpty<jop::Material>("wheelMat", true).setMap(jop::Material::Map::Diffuse, jop::ResourceManager::get<jop::Texture2D>("wheel.png")));
 
 
-            jop::RigidBody2D::ConstructInfo2D wheelInfo(jop::ResourceManager::getNamed<jop::CircleShape2D>("wheels", 1.2f), jop::RigidBody2D::Type::Dynamic, 0.75f);
-            wheelInfo.friction *= 5.f;
+        jop::RigidBody2D::ConstructInfo2D wheelInfo(jop::ResourceManager::getNamed<jop::CircleShape2D>("wheels", 1.2f), jop::RigidBody2D::Type::Dynamic, 0.75f);
+        wheelInfo.friction *= 5.f;
 
-            for (unsigned int i = 0; i < 2; ++i)
-            {
-                float wheelX = (-3.f + (i * 6.f));
-                float wheelY = -3.f;
-                auto wheel = m_car->createChild("");
-                wheel->setPosition(wheelX, wheelY, 0.f);
-                wheel->createComponent<jop::Drawable>(getRenderer()).setModel(wheelModel);
+        for (unsigned int i = 0; i < 2; ++i)
+        {
+            float wheelX = (-3.f + (i * 6.f));
+            float wheelY = -3.f;
+            auto wheel = m_car->createChild("");
+            wheel->setPosition(wheelX, wheelY, 0.f);
+            wheel->createComponent<jop::Drawable>(getRenderer()).setModel(wheelModel);
 
-                //Chassis
-                m_car->getComponent<jop::RigidBody2D>()
+            //Chassis
+            m_car->getComponent<jop::RigidBody2D>()
 
-                    //Attach a joint to it
-                    ->link<jop::WheelJoint2D>(
+                //Attach a joint to it
+                ->link<jop::WheelJoint2D>(
 
-                    //First argument in linking is the second rigidbody to attach the joint to.
-                    //In this case it's the wheel, whose rigidbody we'll create just before attaching it to the chassis
-                    wheel->createComponent<jop::RigidBody2D>(getWorld<2>(), wheelInfo),
+                //First argument in linking is the second rigidbody to attach the joint to.
+                //In this case it's the wheel, whose rigidbody we'll create just before attaching it to the chassis
+                wheel->createComponent<jop::RigidBody2D>(getWorld<2>(), wheelInfo),
 
-                    //Rest of the arguments for the WheelJoint2D constructor
-                    false, glm::vec2(0.f, 1.f), glm::vec2(wheelX, wheelY));
-            }
+                //Rest of the arguments for the WheelJoint2D constructor
+                false, glm::vec2(0.f, 1.f), glm::vec2(wheelX, wheelY));
         }
+    }
     }
 
     ///////////////////////////////////////////////////
@@ -257,15 +254,14 @@ public:
         m_car(createChild("car")),
         m_ground(createChild("ground2D"))
     {
+            getWorld<2>().setDebugMode(true);
 
-        getWorld<2>().setDebugMode(true);
+            m_cam->setPosition(startPos.x, startPos.y, startPos.z + 60.f);
+            m_cam->createComponent<jop::Camera>(getRenderer(), jop::Camera::Projection::Perspective);
 
-        m_cam->setPosition(startPos.x, startPos.y, startPos.z + 60.f);
-        m_cam->createComponent<jop::Camera>(getRenderer(), jop::Camera::Projection::Perspective);
-
-        createBridge();
-        createCar();
-    }
+            createBridge();
+            createCar();
+        }
 
     void postUpdate(const float deltaTime) override
     {

@@ -13,6 +13,9 @@ public:
 
     ////////////////////////////////
 
+    //Keep the crosshair on a circular rail around the player.
+    //The position of the crosshair is the closest point to the cursor or, if out of the screen, keeps the last position given (or no controller input given)
+
     void aim(const float aimX, const float aimY)
     {
         if ((aimX > 0.f && aimX < g_screenSize.x) && (aimY > 0.f && aimY < g_screenSize.y))
@@ -39,7 +42,7 @@ public:
 
             //Player animation
             {
-                m_character->setScale(0.003f); //big tex
+                m_character->setScale(0.003f); //It is a very big texture
                 m_character->createComponent<jop::AnimatedSprite>(m_scene.getRenderer());
                 m_character->getComponent<jop::AnimatedSprite>()->setAnimationRange(0u, 11u).setFrameTime(1.f / 60.f).setAtlas(*c_animAtlasPlayer);
             }

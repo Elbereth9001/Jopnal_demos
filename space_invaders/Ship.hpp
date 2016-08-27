@@ -17,7 +17,6 @@ class Ship
     int m_health;
 
 public:
-
     
     ShipType m_type;
     jop::WeakReference<jop::Object> m_obj;
@@ -59,7 +58,6 @@ public:
 
     //////////////////////////////////////////
 
-
     Ship(jop::Scene& scene, const ShipType type, const glm::vec2 position = glm::vec2(0.f, 0.f)) :
         m_scene(scene),
         m_type(type),
@@ -71,31 +69,22 @@ public:
         case ShipType::player:
             m_obj = scene.createChild("player");
             m_obj->setPosition(position.x, position.y, 0.f);
-            // m_obj->createComponent<jop::RigidBody2D>(scene.getWorld<2>(), *c_playerInfo);
             m_obj->createComponent<jop::Drawable>(scene.getRenderer()).setModel(*c_playerModel);
             break;
 
         case ShipType::enemyLight:
             m_obj = scene.createChild("light");
             m_obj->setPosition(position.x, position.y, 0.f);
-            //m_obj->createComponent<jop::RigidBody2D>(scene.getWorld<2>(), *c_enemyLightInfo);
             m_obj->createComponent<jop::Drawable>(scene.getRenderer()).setModel(*c_enemyLightModel);
             break;
 
         case ShipType::enemyHeavy:
             m_obj = scene.createChild("heavy");
             m_obj->setPosition(position.x, position.y, 0.f);
-            //m_obj->createComponent<jop::RigidBody2D>(scene.getWorld<2>(), *c_enemyHeavyInfo);
             m_obj->createComponent<jop::Drawable>(scene.getRenderer()).setModel(*c_enemyHeavyModel);
             break;
         }
     }
-
-
-
-
-
-
 };
 
 #endif

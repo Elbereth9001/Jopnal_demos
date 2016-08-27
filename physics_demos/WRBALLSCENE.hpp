@@ -31,7 +31,7 @@ private:
 
         jop::RigidBody::ConstructInfo groundInfo(jop::ResourceManager::getNamed<jop::TerrainShape>("ground", floor));
 
-
+        //Put some color to the ground
         std::vector<std::pair<glm::vec3, glm::vec4>> meshPoints;
         std::vector<unsigned int> meshIndices;
         jop::uint32 base(0u);
@@ -188,11 +188,7 @@ public:
         // will, by default, be positioned at [0,0,0] and it'll point directly at [0,0,-1].
         m_cam = createChild("cam");
         m_cam->createComponent<jop::Camera>(getRenderer(), jop::Camera::Projection::Perspective);
-        //New position and rotation of 160 degrees around Y-axis.
-        //m_cam->setPosition(30.f, 10.f, -60.f).setRotation(glm::quat(0.174f, 0.f, 0.985f, 0.f));
-
-
-
+        
         //Activate debug mode so we can see what is happening.
         //getWorld<3>().setDebugMode(true);
 
@@ -207,7 +203,8 @@ public:
         createWall(wall);
         createWreckingBall(chain);
 
-        m_cam->setPosition(findChild("wrBall")->getGlobalPosition());
+        //Camera on the ground
+        m_cam->setPosition(20.f, 10.f, -70.f);
     }
 
     //////////////////////////////////////////////
@@ -219,7 +216,8 @@ public:
         auto c = findChild("wrBall");
         auto p = c->getGlobalPosition();
 
-        m_cam->setPosition(p.x, p.y, p.z + 15.f);
+        //Camera behind the wrecking ball
+        //m_cam->setPosition(p.x, p.y, p.z + 15.f);
         m_cam->lookAt(p);
 
         //We'll delete all the pieces of wall that drop off from the ground plate

@@ -4,9 +4,10 @@
 
 class UI
 {
+    //A user interface factory (sort of)
+
     struct Screen
     {
-        //First: showMask, Second: hiddenMask
         unsigned int mask;
         jop::WeakReference<jop::Object> obj;
         std::vector<std::string> names;
@@ -45,6 +46,10 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////////
 
     //TODO make template
+
+    //Creates a child (root) to the scene,
+    //creates children to the root that will contain the desired ui-elements.
+    //This because currently the engine allows only one text drawable per object
     jop::WeakReference<jop::Object>& UI::createScreen(const std::string& root, const std::vector<glm::vec3>& positions, const std::vector<std::string>& names,
         const unsigned int mask = 0u,
         const std::vector<int>& values = std::vector<int>(),
@@ -124,7 +129,7 @@ public:
 
         if (index == -1)
         {
-            JOP_DEBUG_INFO("updateScreen not found: " << root);
+            JOP_DEBUG_INFO("updateScreen position not found: " << root);
             return;
         }
 
@@ -139,7 +144,7 @@ public:
 
         if (index == -1)
         {
-            JOP_DEBUG_INFO("updateScreen not found: " << root);
+            JOP_DEBUG_INFO("setMask not found: " << root);
             return;
         }
 

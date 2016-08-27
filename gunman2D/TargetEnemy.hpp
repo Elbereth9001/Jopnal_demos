@@ -7,6 +7,8 @@
 class TargetEnemy : public Enemies
 {
 
+    //An enemy that shoots bullets at the player.
+
 public:
 
     TargetEnemy(jop::Scene& scene, const glm::vec3& pos) :

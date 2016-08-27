@@ -7,6 +7,8 @@
 class StaticEnemy : public Enemies
 {
 
+    //An enemy that shoots bullets straight ahead.
+
 public:
 
     StaticEnemy(jop::Scene& scene, const glm::vec3& pos) :

@@ -6,7 +6,6 @@
 #include "Bullet.hpp"
 #include "Ship.hpp"
 
-
 class Master : public jop::Scene
 {
     jop::Scene& m_scene;
@@ -19,16 +18,18 @@ class Master : public jop::Scene
     float m_shootCD;
     float m_timer;
 
-
     ///////////////////////////////////////////
 
+    //Initialize a level
     void init(const unsigned int difficulty)
     {
+        //Create the player
         m_player = new Ship(m_scene, ShipType::player);
 
         float x(-10.f);
         float y(30.f);
 
+        //Create atleast 20 enemies and assign their places, every third enemy being a heavy one
         for (unsigned int i = 0u; i < difficulty + 20u; ++i)
         {
             if (x >= 10.f)
@@ -42,15 +43,14 @@ class Master : public jop::Scene
 
         auto bg = m_scene.createChild("bg");
         bg->setPosition(0.f, 15.f, -0.1f);
-        //bg->setScale(0.1f);
         bg->createComponent<jop::Drawable>(getRenderer()).setModel(*c_backgroundModel);
-
     }
 
     ///////////////////////////////////////////
 
     void gameOver()
     {
+        //Stop the game when lost, use esc to quit
         jop::Engine::setState(jop::Engine::State::RenderOnly);
     }
 
@@ -58,6 +58,7 @@ class Master : public jop::Scene
 
     void nextLevel()
     {
+        //Award points, increase difficulty and start again
         if (m_timer < 5.f + difficulty * 0.1f)
             score += 10u * ((unsigned int)floor(5.f - m_timer));
         difficulty += 10u;
@@ -69,12 +70,15 @@ class Master : public jop::Scene
 
     void updateShips()
     {
+        //If all enemies are dead
         if (m_ships.empty())
             nextLevel();
 
+        //Move enemies closer
         for (auto itr : m_ships)
             itr->moveShip(m_moveDir, m_moveSpeed);
 
+        //Change direction and move closer
         for (auto itr : m_ships)
         {
             if (itr->getPosition().x > 20.f || itr->getPosition().x < -20.f)
@@ -87,6 +91,7 @@ class Master : public jop::Scene
             }
         }
 
+        //If an enemy reaches the bottom of the screen
         for (auto itr : m_ships)
             if (itr->getPosition().y <= 0.f)
                 gameOver();
@@ -96,6 +101,7 @@ class Master : public jop::Scene
 
     void updateBullets()
     {
+        //Bullets move straight up
         for (auto& itr : m_bullets)
         {
             auto p = itr->m_obj->getGlobalPosition();
@@ -104,6 +110,7 @@ class Master : public jop::Scene
 
         for (auto& itrb : m_bullets)
         {
+            //If a bullet hasn't hit anything,
             if (!itrb->m_hasHit)
             {
                 for (unsigned int j = 0u; j < m_ships.size(); ++j)
@@ -111,6 +118,8 @@ class Master : public jop::Scene
                     auto bs = m_ships[j]->m_obj->getComponent<jop::Drawable>()->getGlobalBounds();
                     auto ps = m_ships[j]->m_obj->getGlobalPosition();
                     auto pb = itrb->m_obj->getGlobalPosition();
+
+                    // and is inside an enemy ships hitbox(in this case we use the mesh itself)
                     if (
                         ps.x + bs.second.x >= pb.x &&
                         ps.x + bs.first.x <= pb.x &&
@@ -131,6 +140,7 @@ class Master : public jop::Scene
                             delete m_ships[j];
                             m_ships.erase(m_ships.begin() + j);
                         }
+                        //A single bullet can harm only one enemy
                         break;
                     }
                 }

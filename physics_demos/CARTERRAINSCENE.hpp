@@ -187,10 +187,7 @@ class CARTERRAINSCENE : public jop::Scene
 
             m_car->getComponent<jop::RigidBody>()->link<jop::WheelJoint>(*wheel->getComponent<jop::RigidBody>(), true);
         }
-
-
     }
-
 
 public:
 
@@ -200,35 +197,22 @@ public:
         m_car(createChild("car")),
         m_ground(createChild("ground"))
     {
+            unsigned int groundLength(160u);
+            unsigned int groundWidth(32u);
+            unsigned int entropy(4u);
 
-        unsigned int groundLength(160u);
-        unsigned int groundWidth(32u);
-        unsigned int entropy(4u);
+            unsigned int carLength(6u);
+            unsigned int wheels(4u);
 
-        unsigned int carLength(6u);
-        unsigned int wheels(4u);
+            createGround(groundLength, groundWidth, entropy);
+            createCar(carLength, wheels);
 
-        createGround(groundLength, groundWidth, entropy);
-        createCar(carLength, wheels);
+            m_cam->rotate(2.6f, 0.f, -3.1f);
+            m_cam->setPosition(10.f, 10.f, -10.f);
+            m_cam->createComponent<jop::Camera>(getRenderer(), jop::Camera::Projection::Perspective);
 
-        //   glm::quat q(0.006f, 0.020f, 0.963f, -0.267f);
-        //   auto a = std::atan2(2 * (q.w*q.x + q.y*q.z), 1 - 2 * (sqrt(q.x) + sqrt(q.y)));
-        //   auto b = asin(2 * (q.w*q.y - q.z*q.x));
-        //   auto c = std::atan2(2 * (q.w*q.z + q.x*q.y), 1 - 2 * (sqrt(q.y) + sqrt(q.z)));
-        //   m_cam->rotate(a, b, c);
-
-
-        m_cam->rotate(2.6f, 0.f, -3.1f);
-        //m_cam->rotate(glm::quat(0.006f, 0.020f, 0.963f, -0.267f));
-
-        m_cam->setPosition(10.f, 10.f, -10.f);
-
-        m_cam->createComponent<jop::Camera>(getRenderer(), jop::Camera::Projection::Perspective);
-
-
-        //        getWorld<3>().setDebugMode(true);
-
-    }
+            //getWorld<3>().setDebugMode(true);
+        }
 
     void preUpdate(const float deltaTime) override
     {
@@ -249,19 +233,19 @@ public:
             std::for_each(m_car->getChildren().begin(), m_car->getChildren().end(),
             [](jop::WeakReference<jop::Object> obj){obj->getComponent<jop::RigidBody>()->applyTorque(glm::vec3(-2.f, 0.f, 0.f)); });
         if (k::isKeyDown(k::Left))
-            for (unsigned int i = 0u; i < m_car->getChildren().size(); ++i)
-                if (i % 2)
-                {
-                    auto* j = m_car->getChildren()[i].getComponent<jop::RigidBody>()->getJoint<jop::WheelJoint>();
-                    j->setAngle(j->getAngle() - deltaTime);
-                }
+        for (unsigned int i = 0u; i < m_car->getChildren().size(); ++i)
+        if (i % 2)
+        {
+            auto* j = m_car->getChildren()[i].getComponent<jop::RigidBody>()->getJoint<jop::WheelJoint>();
+            j->setAngle(j->getAngle() - deltaTime);
+        }
         if (k::isKeyDown(k::Right))
-            for (unsigned int i = 0u; i < m_car->getChildren().size(); ++i)
-                if (i % 2)
-                {
-                    auto* j = m_car->getChildren()[i].getComponent<jop::RigidBody>()->getJoint<jop::WheelJoint>();
-                    j->setAngle(j->getAngle() + deltaTime);
-                }
+        for (unsigned int i = 0u; i < m_car->getChildren().size(); ++i)
+        if (i % 2)
+        {
+            auto* j = m_car->getChildren()[i].getComponent<jop::RigidBody>()->getJoint<jop::WheelJoint>();
+            j->setAngle(j->getAngle() + deltaTime);
+        }
     }
 
 };

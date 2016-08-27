@@ -38,7 +38,6 @@ public:
 
         jop::WeakReference<jop::Object> bullet; 
 
-        //Player
         switch (m_type)
         {
 
@@ -204,6 +203,5 @@ public:
         }
     }
 };
-
 
 #endif

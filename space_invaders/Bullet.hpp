@@ -7,7 +7,6 @@
 
 class Bullet
 {
-
     jop::Scene& m_scene;
 
 public:

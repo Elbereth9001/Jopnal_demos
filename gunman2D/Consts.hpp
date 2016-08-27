@@ -25,7 +25,7 @@ const static int g_healthPlayerStart(50);
 const static int g_healthEnemyStart(5);
 const static int g_jumpPower(20);
 
-const static float s_colorLimitTop(s_maxWorldOffsetY * s_maxWorldLength * 0.2f);   //Max values at: offset * length * speed
+const static float s_colorLimitTop(s_maxWorldOffsetY * s_maxWorldLength * 0.2f);   //Color max values at: offset * length * speed(percent)
 const static float s_colorLimitBottom(s_minWorldOffsetY * s_maxWorldLength * 0.2f);
 const static float s_bulletSpeed(50.f);
 const static glm::vec3 s_playerStartPos(-1.f, 5.f, 0.f);
@@ -47,7 +47,7 @@ const jop::RigidBody2D::ConstructInfo2D* c_EnemyInfoTarget;
 //Saved stats here too atm
 int g_health(g_healthPlayerStart);
 unsigned int g_score(0u);
-unsigned int g_density(5u);
+unsigned int g_density(5u); //Enemy density, max at 1
 unsigned int g_level(1u);
 
 //Stuff

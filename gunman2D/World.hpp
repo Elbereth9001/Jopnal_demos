@@ -46,6 +46,7 @@ void SceneWorld::createWorld()
         pointY = 0.f;
         m_groundP.emplace_back(pointX, pointY);
 
+        //Randomize the level
         for (unsigned int i = 0; i < m_levelLength; ++i)
         {
             pointX = r.range<float>(pointX + s_minWorldOffsetX, pointX + s_maxWorldOffsetX);
@@ -111,6 +112,10 @@ void SceneWorld::createWorld()
             //Both = 0.f - +1.f
             colorHere = std::max(0.f, std::min(1.f, 1.f + (((m_groundP[i].y + s_colorLimitBottom) / s_colorLimitTop) * 0.5f)));
             colorNext = std::max(0.f, std::min(1.f, 1.f + (((m_groundP[i + 1u].y + s_colorLimitBottom) / s_colorLimitTop) * 0.5f)));
+            //Start position is at 50% between max height differences
+            //The ground is completely white at ~70% height
+            //The ground is completely green at ~30% height
+            //This because randomizer creating a map that goes to either end is extremely unlikely.
 
             meshPoints.emplace_back(glm::vec3(m_groundP[i].x, m_groundP[i].y, 0.1f), glm::vec4(colorHere, 1.f, colorHere, 1.f));                 // current point = left
             meshPoints.emplace_back(glm::vec3(m_groundP[i].x, s_minWorldOffsetY * s_maxWorldLength, 0.1f), colorBottom);                         // bottom left

@@ -7,17 +7,7 @@ void getResources()
     using r = jop::ResourceManager;
     using b = jop::RigidBody2D;
 
-    static const b::ConstructInfo2D bulletInfo(r::getNamed<ConeShape2D>("bullet", 0.2f, 0.6f), b::Type::Kinematic);
-    c_bulletInfo = &bulletInfo;
-
-    static const b::ConstructInfo2D playerInfo(r::getNamed<ConeShape2D>("player", 0.65f, 1.5f), b::Type::Kinematic);
-    c_playerInfo = &playerInfo;
-
-    static const b::ConstructInfo2D enemyLightInfo(r::getNamed<ConeShape2D>("enemyLight", 0.5f, 1.2f), b::Type::Kinematic);
-    c_enemyLightInfo = &enemyLightInfo;
-
-    static const b::ConstructInfo2D enemyHeavyInfo(r::getNamed<ConeShape2D>("enemyHeavy", 0.8f, 1.8f), b::Type::Kinematic);
-    c_enemyHeavyInfo = &enemyHeavyInfo;
+    //We'll use the same models all the time in the game and don't change them so we'll need to load them only once.
 
     static const Model bulletmodel(
         r::getNamed<RectangleMesh>("bulletMesh", glm::vec2(0.35f, 0.75f)),
@@ -45,8 +35,6 @@ void getResources()
     c_backgroundModel = &background;
 
 }
-
-
 
 int main(int argc, char* argv[])
 {

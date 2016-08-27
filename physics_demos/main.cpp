@@ -1,6 +1,3 @@
-
-
-
 // Jopnal.hpp contains all engine functionality.
 #include <Jopnal/Jopnal.hpp>
 
@@ -9,15 +6,11 @@ int main(int argc, char* argv[])
 {
     JOP_ENGINE_INIT("MyProject", argc, argv);
 
-#if 0
+    //Change these from 0 to 1 to test them
+
+#if 1
 #include "WRBALLSCENE.hpp"
     jop::Engine::createScene<WRBALLSCENE>();
-#endif
-
-#if 0
-    //FAILURE
-#include "CONVEYORBELT.hpp"
-    jop::Engine::createScene<CONVEYORSCENE>();
 #endif
 
 #if 0
@@ -25,11 +18,22 @@ int main(int argc, char* argv[])
     jop::Engine::createScene<BRIDGESCENE>();
 #endif
 
-#if 1
+#if 0
 #include "CARTERRAINSCENE.hpp"
     jop::Engine::createScene<CARTERRAINSCENE>();
 #endif
 
-    // Finally run the main loop. The program can be closed by clicking the window red X button.
+    //The demo can be exited by pressing escape
+    class EventHandler : public jop::WindowEventHandler
+    {
+    public:
+        void keyPressed(const int key, const int, const int mods) override
+        {
+            if (key == jop::Keyboard::Escape)
+                jop::Engine::Exit();
+        }
+    };
+
+    // Finally run the main loop.
     return JOP_MAIN_LOOP;
 }

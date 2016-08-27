@@ -19,6 +19,7 @@ private:
 
     /////////////////////////////////////////////////
 
+    //Initialize the level
     void init()
     {
         m_world.createWorld();
@@ -154,6 +155,7 @@ public:
         {
             removeNews(i);
         }
+        //If we don't unload the ground, it will stay in the engine memory, and will start to overlap with later levels
         jop::ResourceManager::unload("ground");
         jop::Engine::createScene<tehGame>();
     }
@@ -162,6 +164,7 @@ public:
 
     void end()
     {
+        //Game over
         jop::Vibrator::vibrate(1000u);
         jop::Engine::setState(jop::Engine::State::RenderOnly);
 
